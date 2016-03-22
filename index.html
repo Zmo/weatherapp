@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title>Weatherapp</title>
+        <script src="/node_modules/angular/angular.js"></script>
+        <script src="index.js"></script>
+        <link rel="stylesheet" type="text/css" href="index.css">
+    </head>
+    <body ng-app="weatherApp">
+        <h1>Weatherapp</h1>
+        <form action="">
+            <input type="text" ng-model="cityName">
+            <input type="submit" value="Search" ng-click="searchCity()">
+        </form>
+    </body>
+</html>
