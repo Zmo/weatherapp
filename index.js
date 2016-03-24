@@ -1,28 +1,55 @@
 var weatherApp = angular.module("weatherApp", []);
 
-weatherApp.controller("weatherCtrl", "$http", function($http) {
+weatherApp.controller("weatherCtrl", ["$http", function($http) {
 
-    this.savedCities = [];
+    var vm = this;
+    vm.cities = [];
+    vm.savedCities = [];
 
-    this.searchCity = function(city) {
+    vm.searchCity = function(city) {
+        vm.cities = [];
         // Really bad to include apikey here, but without any server side code there are no other options
         $http.get("http://api.wunderground.com/api/c8d1b9e930ae1150/geolookup/q/"+city+".json").then(function(result) {
+            if (result.data.response.error) {
+                vm.errorMessage = result.data.response.error;
+            } else if(result.data.location) {
+                vm.getCityWeather(result.data.location.country, result.data.location.state, result.data.location.city);
+            } else {
+                result.data.response.results.forEach(function(city) {
+                    city.displayName = generateDisplayName(city);
+                });
+                vm.cities = result.data.response.results;
+            }
             console.log(result);
         }, function(error) {
-            this.errorMessage = error;
-        };
+            vm.errorMessage = error;
+        });
     };
 
-    this.searchWeather = function(country, city) {
+    vm.getCityWeather = function(country, state, city) {
+        var locParam = state ? state : country;
         // Really bad to include apikey here, but without any server side code there are no other options
-        $http.get("http://api.wunderground.com/api/c8d1b9e930ae1150/geolookup/q/"+country+"/"+city+".json").then(function(result) {
+        $http.get("http://api.wunderground.com/api/c8d1b9e930ae1150/conditions/q/"+locParam+"/"+city+".json").then(function(result) {
             console.log(result);
+            vm.currentWeather = result.data.current_observation;
+            vm.currentWeather.city = city;
         }, function(error) {
-            this.errorMessage = error;
-        };
+            vm.errorMessage = error;
+        });
     };
 
-    this.saveCity = function(city) {
-        this.savedCities.push(city);
+    vm.saveCity = function(weatherObs) {
+        console.log(weatherObs)
+        var temp = vm.savedCities;
+        temp.push({displayName: weatherObs.display_location.full});
+        temp.sort(function(a,b) { return a.displayName.localeCompare(b.displayName); });
+        vm.savedCities = temp;
     };
-});
+
+    function generateDisplayName(loc) {
+        var ret = loc.city+", ";
+        ret += loc.state ? loc.state+", " : "";
+        ret += loc.country_name;
+        return ret;
+    }
+}]);
