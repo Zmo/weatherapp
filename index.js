@@ -20,7 +20,6 @@ weatherApp.controller("weatherCtrl", ["$http", function($http) {
                 });
                 vm.cities = result.data.response.results;
             }
-            console.log(result);
         }, function(error) {
             vm.errorMessage = error;
         });
@@ -30,18 +29,21 @@ weatherApp.controller("weatherCtrl", ["$http", function($http) {
         var locParam = state ? state : country;
         // Really bad to include apikey here, but without any server side code there are no other options
         $http.get("http://api.wunderground.com/api/c8d1b9e930ae1150/conditions/q/"+locParam+"/"+city+".json").then(function(result) {
-            console.log(result);
-            vm.currentWeather = result.data.current_observation;
-            vm.currentWeather.city = city;
+            if (result.data.response.error) {
+                vm.errorMessage = result.data.response.error.description;
+            } else {
+                vm.currentWeather = result.data.current_observation;
+                vm.currentWeather.city = city;
+            }
         }, function(error) {
             vm.errorMessage = error;
         });
     };
 
     vm.saveCity = function(weatherObs) {
-        console.log(weatherObs)
         var temp = vm.savedCities;
-        temp.push({displayName: weatherObs.display_location.full});
+        temp.push({displayName: weatherObs.display_location.full, city: weatherObs.observation_location.city,
+        state: weatherObs.observation_location.state, country: weatherObs.observation_location.country});
         temp.sort(function(a,b) { return a.displayName.localeCompare(b.displayName); });
         vm.savedCities = temp;
     };
