@@ -1,3 +1,62 @@
 body {
-    width: 80%;
+    background-color: #e6fff5;
+}
+
+#content {
+    max-width: 50em;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    height: 100%;
+    padding: 1em;
+}
+
+#leftFloat {
+    float: left;
+    max-width: 30em;
+    width: 100%;
+}
+
+#rightFloat {
+    float: right;
+    max-width: 15em;
+    width: 100%;
+}
+
+h1 {
+
+}
+
+.block {
+    display: block;
+}
+
+.btn {
+    background-color: #5cd65c;
+    border: none;
+    border-radius: 0.5em;
+    font-size: 16px;
+    padding: 0.5em;
+}
+
+.btn:hover {
+    background-color: #2eb82e;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    background-color: #d9d9d9;
+}
+
+.list {
+    list-style-type: none;
+}
+
+.litem {
+    margin-bottom: 1em;
+}
+
+.litem--clickable:hover {
+    cursor: pointer;
+    color: blue;
 }

@@ -1,15 +1,46 @@
-<html>
+<html ng-app="weatherApp">
     <head>
         <title>Weatherapp</title>
         <script src="/node_modules/angular/angular.js"></script>
         <script src="index.js"></script>
         <link rel="stylesheet" type="text/css" href="index.css">
     </head>
-    <body ng-app="weatherApp">
-        <h1>Weatherapp</h1>
-        <form action="">
-            <input type="text" ng-model="cityName">
-            <input type="submit" value="Search" ng-click="searchCity()">
-        </form>
+    <body ng-controller="weatherCtrl as weather">
+        <div id="content">
+            <h1>Weatherapp</h1>
+            <div id="leftFloat">
+                <div>
+                    <span>Search for a city</span>
+                    <form>
+                        <input type="text" ng-model="cityName">
+                        <input class="btn" type="submit" value="Search" ng-disabled="!cityName.length" ng-click="weather.searchCity(cityName)">
+                    </form>
+                    <span ng-if="weather.errorMessage">{{ weather.errorMessage }}</span>
+                    <span ng-if="weather.cities.length">Multiple results. Please select one.</span>
+                    <ul class="list">
+                        <li class="litem litem--clickable" ng-repeat="city in weather.cities" ng-click="weather.getCityWeather(city.country, city.state, city.name)">
+                            <span>{{ city.displayName }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div ng-if="weather.currentWeather">
+                    <span class="block">Weather info for {{ weather.currentWeather.city }}</span>
+                    <img src="{{ weather.currentWeather.icon_url }}">
+                    <span class="block">{{ weather.currentWeather.weather }}</span>
+                    <span class="block">Temperature: {{ weather.currentWeather.temp_c }}</span>
+                    <span class="block">Feels like: {{ weather.currentWeather.feelslike_c }}</span>
+                    <button class="btn" ng-click="weather.saveCity(weather.currentWeather)">Save this city!</button>
+                </div>
+            </div>
+            <div id="rightFloat">
+                <span class="block">Your saved cities</span>
+                <span class="block" ng-if="!weather.savedCities.length">No saved cities</span>
+                <ul class="list">
+                    <li class="litem litem--clickable" ng-repeat="city in weather.savedCities" ng-click="weather.getCityWeather(city.country, city.state, city.city)">
+                        <span>{{ city.displayName }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </body>
 </html>
